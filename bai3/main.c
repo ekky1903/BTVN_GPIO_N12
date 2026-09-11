@@ -86,7 +86,8 @@ int main(void) {
                 GPIOA->ODR |= ((uint32_t)(led_state & 0x1F) << 8);
                 GPIOA->ODR |= ((uint32_t)((led_state >> 7) & 0x01) << 15);
 
-                GPIOB->ODR &= ~(0x3UL << 13);
+                GPIOB->ODR &= ~(0x1UL << 13);
+                GPIOB->ODR &= ~(0x1UL << 14);
                 GPIOB->ODR |= ((uint32_t)((led_state >> 5) & 0x03) << 13);
             }
 
