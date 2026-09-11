@@ -88,7 +88,8 @@ int main(void) {
 
                 GPIOB->ODR &= ~(0x1UL << 13);
                 GPIOB->ODR &= ~(0x1UL << 14);
-                GPIOB->ODR |= ((uint32_t)((led_state >> 5) & 0x03) << 13);
+                GPIOB->ODR |= (((led_state >> 5) & 0x01UL) << 13);
+                GPIOB->ODR |= (((led_state >> 6) & 0x01UL) << 14);
             }
 
             last_btn_state = current_btn;
