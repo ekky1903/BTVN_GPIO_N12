@@ -67,24 +67,30 @@ int main(void) {
     GPIOB->CRH &= ~(0x00FF0000UL);
     GPIOB->CRH |=  (0x00220000UL);
 
+    uint8_t led_state = 0x00;
+    uint8_t last_btn_state = 0xFF;
+
     while (1) {
         uint8_t read1 = (uint8_t)(GPIOA->IDR & 0xFFUL);
-
         delay_ms(20);
-
         uint8_t read2 = (uint8_t)(GPIOA->IDR & 0xFFUL);
 
         if (read1 == read2) {
-            uint8_t inv = ~read1;
+            uint8_t current_btn = read1;
+            uint8_t pressed = last_btn_state & (~current_btn);
 
-            GPIOA->ODR &= ~((0x1FUL << 8) | (1UL << 15));
-            GPIOA->ODR |= ((uint32_t)(inv & 0x1F) << 8);
-            GPIOA->ODR |= ((uint32_t)((inv >> 7) & 0x01) << 15);
+            if (pressed) {
+                led_state ^= pressed;
 
-            GPIOB->ODR &= ~(0x3UL << 13);
-            GPIOB->ODR |= ((uint32_t)((inv >> 5) & 0x03) << 13);
-        } else {
-            
+                GPIOA->ODR &= ~((0x1FUL << 8) | (1UL << 15));
+                GPIOA->ODR |= ((uint32_t)(led_state & 0x1F) << 8);
+                GPIOA->ODR |= ((uint32_t)((led_state >> 7) & 0x01) << 15);
+
+                GPIOB->ODR &= ~(0x3UL << 13);
+                GPIOB->ODR |= ((uint32_t)((led_state >> 5) & 0x03) << 13);
+            }
+
+            last_btn_state = current_btn;
         }
     }
 }
